@@ -15,29 +15,35 @@ public class EventList {
 	public void add(AccountingEvent event) {
 		events.add(event);
 	}
+
 	private List<AccountingEvent> unprocessedEvents() {
 		List<AccountingEvent> result = new ArrayList<AccountingEvent>();
 		for (AccountingEvent event : events)
-			if (!event.isProcessed())
+			if (!event.isProcessed()) {
 				result.add(event);
+            }
 		return result;
 	}
+
 	private void logProcessingError(AccountingEvent event, Exception exception) {
 		processingErrors.add(event);
 		throw new RuntimeException(exception);
 	}
+
 	public boolean hasProcessingErrors() {
 		return !processingErrors.isEmpty();
 	}
+
 	public void process() {
 		for (AccountingEvent event : unprocessedEvents()) {
 			try {
 				event.process();
 			} catch (Exception e) {
-				if (shouldOnlyLogProcessingErrors)
+				if (shouldOnlyLogProcessingErrors) {
 					logProcessingError(event, e);
-				else
+                } else {
 					throw new RuntimeException(e);
+                }
 			}
 		}
 	}

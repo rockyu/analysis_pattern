@@ -46,6 +46,7 @@ public class Customer extends NamedObject implements Subject {
 	public Map<AccountType, Account> getAccounts() {
 		return accounts;
 	}
+
 	public void setAccounts(Map<AccountType, Account> accounts) {
 		this.accounts = accounts;
 	}
@@ -72,6 +73,7 @@ public class Customer extends NamedObject implements Subject {
 	AccountType[] accountTypes() {
 		return accounts.keySet().toArray(new AccountType[accounts.size()]);
 	}
+
 	public String toString() {
 		StringBuffer result = new StringBuffer();
 		AccountType[] types = accountTypes();
