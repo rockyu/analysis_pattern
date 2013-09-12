@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/!svn/ver/85/trunk/pattern/analysis/src/main/java/study/pattern/analysis/accounting/postingrule
+END
+MissingPostingRuleException.java
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/svn/!svn/ver/85/trunk/pattern/analysis/src/main/java/study/pattern/analysis/accounting/postingrule/MissingPostingRuleException.java
+END
+PoorCapPR.java
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/!svn/ver/85/trunk/pattern/analysis/src/main/java/study/pattern/analysis/accounting/postingrule/PoorCapPR.java
+END
+MultiplyByRatePR.java
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/svn/!svn/ver/85/trunk/pattern/analysis/src/main/java/study/pattern/analysis/accounting/postingrule/MultiplyByRatePR.java
+END
+AmountFomulaPR.java
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/svn/!svn/ver/85/trunk/pattern/analysis/src/main/java/study/pattern/analysis/accounting/postingrule/AmountFomulaPR.java
+END
+PostingRule.java
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/svn/!svn/ver/85/trunk/pattern/analysis/src/main/java/study/pattern/analysis/accounting/postingrule/PostingRule.java
+END

@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/!svn/ver/85/trunk/pattern/analysis/src/main/java/study/pattern/analysis/event/agreementdispatcher
+END
+Subject.java
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/!svn/ver/85/trunk/pattern/analysis/src/main/java/study/pattern/analysis/event/agreementdispatcher/Subject.java
+END
+AgreementRegistry.java
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/svn/!svn/ver/85/trunk/pattern/analysis/src/main/java/study/pattern/analysis/event/agreementdispatcher/AgreementRegistry.java
+END
+Customer.java
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/svn/!svn/ver/85/trunk/pattern/analysis/src/main/java/study/pattern/analysis/event/agreementdispatcher/Customer.java
+END
+ServiceAgreement.java
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/svn/!svn/ver/85/trunk/pattern/analysis/src/main/java/study/pattern/analysis/event/agreementdispatcher/ServiceAgreement.java
+END
+EventList.java
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/!svn/ver/85/trunk/pattern/analysis/src/main/java/study/pattern/analysis/event/agreementdispatcher/EventList.java
+END

@@ -1,0 +1,69 @@
+<h1>Snapshot</h1>
+
+<p><i>A view of an object at a point in time</i></p>
+<img src = 'snapshot/snapshot-sketch.gif'></img>
+<h2>How it Works</h2>
+<P>A <i>Snapshot</i> is simply a view of an object with all the temporal
+aspects removed. So if the full temporal object has an accessor in the
+form <code>getAddress(date)</code> then the snapshot will have an
+accessor <code>getAddress()</code>. All questions of a snapshot are
+non-temporal.
+</P><P>When you create a snapshot, you need to supply an appropriate
+date. If Bi-temporality is present, then you'll need both actual and
+record dates.
+</P><P>Snapshots are a view to help accessing, so in most cases they
+should be immutable. An exception to this is where you might update a
+snapshot and then apply it back to the real object as at some
+date. This is not something that I'd do very often, and usually only
+when working with an external system that isn't aware of temporality.
+</P>
+<h2>When to use it</h2>
+<P>Temporality adds a good bit of complexity to a design and there are
+times when you don't want to take that into account. Maybe you are in
+a context where the you want to do a good bit of work with respect to
+a particular timepoint and you don't want to keep reminding the system
+which timepoint you're dealing with. Or maybe you are linking to a
+system that doesn't understand temporality. Then you can take a
+snapshot for use with that system.
+</P>
+<h2>Further Reading</h2>
+<P>This pattern was crystalized for me when collaborating with Andy Carlson on our <a href = 'http://www.amazon.com/exec/obidos/ASIN/0201433044'>plop paper</a>.
+</P>
+<h2>Example: Implementing Snapshot (Java)</h2>
+<P>Putting together a snapshot is really
+quite straightforward. The key is to use delegation so that the
+snapshot acts as an adaptor on the underlying object.
+</P>
+<div class = 'figure'>
+<p class = 'figureImage'><a name = 'snapshot_snapshot-sample.gif'></a><img src = 'snapshot/snapshot-sample.gif' alt = 'Figure 1'></img></p>
+
+<p class = 'figureCaption'>Figure 1: Using delegation to implement a snapshot</p>
+</div>
+<pre>class Customer...
+  private TemporalCollection addresses = new SingleTemporalCollection();
+  public Address getAddress(MfDate date) {
+    return (Address) addresses.get(date);
+  }
+  public Address getAddress() {
+    return getAddress(MfDate.today());
+  }
+  public void putAddress(MfDate date, Address value) {
+    addresses.put(date, value);
+  }
+</pre><pre>class CustomerSnapshot...
+  private Customer base;
+  private MfDate validDate;
+  public CustomerSnapshot (Customer base, MfDate validDate) {
+    this.base = base;
+    this.validDate = validDate;
+  }
+  public Address getAddress() {
+    return base.getAddress(validDate);
+  }
+</pre><P>Notice in this case that you create a snapshot by calling the
+constructor on the <code>CustomerSnapshot</code> supplying the
+customer and the actual date. You can also do this by calling a
+<code>createSnapshot(Date)</code> method on the Customer. Using the
+constructor allows you to avoid a dependency from the Customer to its
+snapshot.
+</P>

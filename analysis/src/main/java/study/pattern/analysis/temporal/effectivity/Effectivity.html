@@ -1,0 +1,207 @@
+<h1>Effectivity</h1>
+
+<p><i>Add a time period to an object to show when it is effective.</i></p>
+<img src = 'effectivity/effectivity-sketch.gif'></img>
+<h2>How it Works</h2>
+<P>Many facts are true only for a certain period of time. So an
+	obvious way to describe these facts is to mark them with a period of
+	time. For many that period is a pair of dates, however <a href = 'Range.html'>Range</a> can be used here to make that date range an object.
+	</P><P>Once defined, effectivity ranges are then used in queries to
+	return the appropriate objects that are effective on a certain date.
+	</P><P>The effectivity range if often updated directly, however it
+	usually makes sense to provide an interface that better fits the
+	need of the class. A creation method can take the start date of the
+	effectivity period, and then use an open-ended <a href = 'Range.html'>Range</a> to indicate there is no end date: this fits cases
+	where something is set to be created on a certain date and is
+	effective until further notice. When that further notice comes, you
+	can have a method that indicates that the object is no longer
+	effective and the date that occurs
+	</P><P>Using the employment example suggested in the sketch, we have a
+	person, Wellington. On Dec 12 1999 he begins employment with India
+	Inc, which we represent by creating an employment object ( Figure <a href = '#effectivity_wellington-india.gif'>1</a>). As time continues he starts a new
+	employment with Peninsula Inc on April 1 and ends his employment
+	with India Inc on May 1.  Figure <a href = '#effectivity_wellington-pen.gif'>2</a> shows
+	the state of the objects after these events. Notice that this means
+	that during April he was employed by both.
+	</P>
+<div class = 'figure'>
+<p class = 'figureImage'><a name = 'effectivity_wellington-india.gif'></a><img src = 'effectivity/wellington-india.gif' alt = 'Figure 1'></img></p>
+
+<p class = 'figureCaption'>Figure 1: With a single employment</p>
+</div>
+
+<div class = 'figure'>
+<p class = 'figureImage'><a name = 'effectivity_wellington-pen.gif'></a><img src = 'effectivity/wellington-pen.gif' alt = 'Figure 2'></img></p>
+
+<p class = 'figureCaption'>Figure 2: One employment ended, another
+	begun</p>
+</div>
+<P>This update mechanism handles additive updates,
+	that is updates that occur in the right order on the time line. In
+	many cases additive updates are all you need. Sometimes, however,
+	you need retroactive updates, effectively correcting mistakes in the
+	timeline. Say we discover later that Wellington actually worked for
+	Dublin Inc during May and didn't start with Peninsula Inc until June
+	1. We have to alter the effectivity on the employment for Peninsula
+	and add a new employment for Dublin to yield the state described in
+	 Figure <a href = '#effectivity_wellington-dub.gif'>3</a>.
+	</P>
+<div class = 'figure'>
+<p class = 'figureImage'><a name = 'effectivity_wellington-dub.gif'></a><img src = 'effectivity/wellington-dub.gif' alt = 'Figure 3'></img></p>
+
+<p class = 'figureCaption'>Figure 3: After adding the Dublin Inc
+	employment</p>
+</div>
+<P>This usually requires a more primitive
+	interface that allows employments have their effectivity ranges
+	changes directly.
+	</P><P>Supporting retroactive changes is often important, since people
+	do make mistakes. We can add that by having direct access to the
+	effectivity date range.
+	</P><P>Adding bi-temporal support is, in a sense, pretty simple - you
+	just add another date range. Of course the complexity is passed to
+	the users of the class who now need to use both dates all the time
+	in their queries and updates.
+	</P>
+<h2>When to use it</h2>
+<P>Effectivity dating is the most common way to indicate temporality
+in modelling. It's simple and easy to understand its usage. It's
+principal disadvantage is that it requires the client to be aware of
+these temporal aspects and take them into account while processing.
+So any query that wants to look at current information needs to add a
+clause in its logic to test the effectivity range. While this is not a
+very onerous requirement it does make things more tricky, particularly
+when the temporal responsibility is not obvious from the domain.
+</P><P>It's possible to build structures that remove much of this
+responsibility and thus make the temporal issues more transparent - so
+that you only need to worry about them when you specifically need
+to. To do this for a property at a time you can use <a href = 'TemporalProperty.html'>Temporal Property</a>. To do this for a whole object you can use
+<a href = 'TemporalObject.html'>Temporal Object</a>. Both of these more sophisticated
+patterns handle much of the temporal logic, reducing the burden on the
+clients of these objects.
+</P><P>So use <i>Effectivity</i> when you have a simple situation for temporal
+behavior, and it makes sense in the domain that those objects should
+be temporal. In an object implementation you should ensure you
+actually use <a href = 'Range.html'>Range</a> for the effectivity range, as
+that is much easier than using pairs of dates.
+</P>
+<h2>Example: Employments (Java)</h2>
+<P>These code examples parallel the cases I talked about in the how
+	it works section. I'll start with simple named object classes for
+	person and company.
+	</P><pre>class NamedObject...
+  protected String _name = "no name";
+  public NamedObject ()  {}
+  public NamedObject (String name)  {_name = name;}
+  public String name ()  {return _name;}
+  public String toString() {return _name;}
+</pre><pre>class Company...
+class Company extends NamedObject{
+  Company (String name) {
+    super(name);
+  }
+</pre><pre>class Person...
+class Person extends NamedObject{
+  private List employments = new ArrayList();
+  public Person (String name) {
+    super(name);
+  }
+  Employment[] employments() {
+    return (Employment[]) employments.toArray(new Employment[0]);
+  }
+</pre><P>The employment class is the one with the effectivity range. It's basic data is very simple
+	</P><pre>class Employment...
+  private DateRange effective;
+  private Company company;
+  Company company() {return company;}
+  boolean isEffectiveOn(MfDate arg){
+    return effective.includes(arg);
+  }
+</pre><P>Now let's add additive behavior. I add new employments by a method on person that creates a new employment, using the start date.
+	</P><pre>class Person...
+  void addEmployment(Company company, MfDate startDate) {
+    employments.add(new Employment(company, startDate));
+  }
+</pre><pre>class Employment...
+  Employment (Company company, MfDate startDate) {
+    this.company = company;
+    effective = DateRange.startingOn(startDate);
+  }
+</pre><P>I end an employment with a method on the Employment class.
+	</P><pre>class Employment...
+  void end (MfDate endDate) {
+    effective = new DateRange(effective.start(), endDate);
+  }
+</pre><P>With this in place we can now add employments to a person and query them to find the appropriate ones for a particular day.
+	</P><pre>class Tester...
+  public void setUp() {
+    duke.addEmployment(india, new mf.MfDate(1999,12,1));
+    duke.addEmployment(peninsular, new MfDate(2000,4,1));
+    duke.employments()[0].end(new MfDate (2000,5,1));
+  }
+  public void testAdditive() {
+    assertEquals(2, duke.employments().length);
+    Employment actual = null;
+    for (int i = 0; i &lt; duke.employments().length; i++) {
+      if (duke.employments()[i].isEffectiveOn(new MfDate(2000,6,1))) {
+        actual = duke.employments()[i];
+        break;
+      }
+    }
+    assertNotNull(actual);
+    assertEquals(peninsular, actual.company());
+  }
+</pre><P>A good object designer may wonder if that
+	for loop should really be moved into a method on the Person
+	class. Indeed it should, and that's the driver for the <a href = 'TemporalProperty.html'>Temporal Property</a> pattern. Well see the consequences of such
+	a move there, so I'll continue to use the for loop in fragments for
+	this pattern.
+	</P><P>Now let's look at the retroactive changes. For these we need some
+	more primitive behavior on employment and person.
+	</P><pre>class Person...
+   void addEmployment(Employment arg) {
+    employments.add(arg);
+  }
+</pre><pre>class Employment...
+  void setEffectivity(DateRange arg) {
+    effective = arg;
+  }
+  Employment (Company company, DateRange effective) {
+    this.company = company;
+    this.effective = effective;
+  }
+</pre><P>We can then make retroactive changes like this:
+	</P><pre>class Tester...
+  public void testRetro() {
+    duke.employments()[1].setEffectivity(DateRange.startingOn(new MfDate(2000,6,1)));
+    duke.addEmployment(new Employment(dublin, new DateRange(new MfDate(2000,5,1), new MfDate(2000,5,31))));
+    Employment april = null;
+    for (int i = 0; i &lt; duke.employments().length; i++) {
+      if (duke.employments()[i].isEffectiveOn(new MfDate(2000,4,10))) {
+        april = duke.employments()[i];
+        break;
+      }
+    }
+    assertNotNull(april);
+    assertEquals(india, april.company());
+    Employment may = null;
+    for (int i = 0; i &lt; duke.employments().length; i++) {
+      if (duke.employments()[i].isEffectiveOn(new MfDate(2000,5,10))) {
+        may = duke.employments()[i];
+        break;
+      }
+    }
+    assertNotNull("null may", may);
+    assertEquals(dublin, may.company());
+  }
+</pre><P>Retrospective changes aren't always needed but they usually are -
+	after all people are known for making mistakes. Making a
+	retrospective change usually requires this kind of more primitive
+	interface than an additive change, so there's an argument that you
+	don't need the separate interface for an additive change. However I
+	prefer to include it, as it makes it easier to do the most common
+	additive changes. After all we're not looking for the smallest
+	interface, but the easiest to use. Small helps ease of use (since
+	there's less to learn) but it's only one factor, not the dominant
+	one.
+	</P>

@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/!svn/ver/85/trunk/pattern/dsl/src/main/java/study/pattern/dsl/altcompmodel/decisiontable
+END
+ITable.java
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/!svn/ver/85/trunk/pattern/dsl/src/main/java/study/pattern/dsl/altcompmodel/decisiontable/ITable.java
+END
+Customer.java
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/!svn/ver/85/trunk/pattern/dsl/src/main/java/study/pattern/dsl/altcompmodel/decisiontable/Customer.java
+END
+ConditionBlock.java
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/!svn/ver/85/trunk/pattern/dsl/src/main/java/study/pattern/dsl/altcompmodel/decisiontable/ConditionBlock.java
+END
+Main.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/!svn/ver/85/trunk/pattern/dsl/src/main/java/study/pattern/dsl/altcompmodel/decisiontable/Main.java
+END
+TableParser.java
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/!svn/ver/85/trunk/pattern/dsl/src/main/java/study/pattern/dsl/altcompmodel/decisiontable/TableParser.java
+END
+DecisionTable.java
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/!svn/ver/85/trunk/pattern/dsl/src/main/java/study/pattern/dsl/altcompmodel/decisiontable/DecisionTable.java
+END
+Condition.java
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/!svn/ver/85/trunk/pattern/dsl/src/main/java/study/pattern/dsl/altcompmodel/decisiontable/Condition.java
+END
+Order.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/!svn/ver/85/trunk/pattern/dsl/src/main/java/study/pattern/dsl/altcompmodel/decisiontable/Order.java
+END
+Column.java
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/!svn/ver/85/trunk/pattern/dsl/src/main/java/study/pattern/dsl/altcompmodel/decisiontable/Column.java
+END
+FeeResult.java
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/!svn/ver/85/trunk/pattern/dsl/src/main/java/study/pattern/dsl/altcompmodel/decisiontable/FeeResult.java
+END
+Bool3.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/!svn/ver/85/trunk/pattern/dsl/src/main/java/study/pattern/dsl/altcompmodel/decisiontable/Bool3.java
+END

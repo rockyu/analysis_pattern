@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Time Point</title>
+<meta name="Description" content="creole wiki js demo" />
+<meta name="Keywords" content="creole wiki js demo" />
+<link rel="stylesheet" type="text/css" href="../../resources/wiki.css" />
+<script type="text/javascript" src="../../resources/wiki.js"></script>
+</head>
+<body >
+<textarea rows="10" cols="100" id="wikiText">
+= Time Point 时间点  =
+{{{
+代表某种时间粒度上的一个点
+}}}
+* 出处：Martin Fowler， http://www.martinfowler.com/eaaDev/TimePoint.html
+
+== How it Works 运行机制 ==
+* 考虑精度：精确到日期？精确到秒？大多数业务精确到日期。
+* 处理时区：大多数缺省用本地时区。
+* 时间点是个固定值：代表时间线上的一个特定点。"2:30pm"不是个时间点，它可以是任意一天的"2:30pm"——除非给出它所在的日期。
+* 当前时间点：一般取系统时钟；不过单元测试通常需要特定时间，最好允许手工设定当前时间点。
+
+== When to use it 使用时机 ==
+* 根据领域需求来选择时间精度。
+* 一般不需要时区。
+
+== Further Reading 进一步阅读 ==
+
+
+== Example 示例 ==
+DateTime.java
+
+</textarea>
+<div id="wikiPage"></div>
+
+<script type="text/javascript"><!--
+window.onload = function() {
+  var creole = new Parse.Simple.Creole();
+  creole.parse(document.getElementById('wikiPage'), document.getElementById('wikiText').value);
+}
+//--></script>
+</body>
+</html>

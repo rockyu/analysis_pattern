@@ -1,0 +1,123 @@
+html,body,div,p,table,tr,td,form,img,h1,h2,h3,h4,h5,h6,ul,ol,li,input{
+  background-position:left top;
+  background-repeat:no-repeat;
+  margin:0px;
+  padding:0px
+}
+html,body,div,p,table,tr,td,form,img,h1,h2,h3,h4,h5,h6,li{
+  border-width:0px
+}
+body *{
+  font-family:Tahoma,Verdana,Segoe,sans-serif
+}
+body{
+  background-color:#fff;
+  font-size:75%;
+}
+a:link,a:visited{
+  text-decoration:none
+}
+a:hover,a:active{
+  text-decoration:underline
+}
+#wikiPage h1,#wikiPage h2,#wikiPage h3,#wikiPage h4,#wikiPage h5{
+  color:#000;
+  background-color:inherit;
+  margin:0.75em 18px 0.5em 0;
+  font-weight:normal;
+  clear:left;
+}
+#wikiPage h1{
+  font-size:1.6em;
+  border-bottom:1px solid #8cacbb;
+  font-weight:bold;
+}
+#wikiPage h2{
+  font-size:1.5em;
+  margin-left:18px;
+  border-bottom:1px solid #8cacbb;
+  font-weight:bold;
+}
+#wikiPage h3{
+  font-size:1.4em;
+  margin-left:36px;
+  font-weight:bold;
+}
+#wikiPage h4{
+  font-size:1.2em;
+  margin-left:36px;
+  font-weight:bold;
+}
+#wikiPage h5{
+  font-size:1.1em;
+  margin-left:36px;
+  font-weight:bold;
+}
+#wikiText{
+  display:none;
+}
+#wikiPage{
+  margin:4px 2em 2em 1em;
+}
+#wikiPage p, #wikiPage blockquote, #wikiPage table, #wikiPage pre, #wikiPage hr{
+  margin:0.5em 18px 0.5em 36px;
+}
+#wikiPage p{
+  line-height:150%;
+}
+#wikiPage pre{
+  background-color:#f7f9fa;
+  border:1px dotted #8cacbb;
+  line-height:150%;
+  overflow:auto;
+  padding:0.5em;
+}
+#wikiPage hr{
+  border-top:1px solid #8cacbb;
+  text-align:center;
+  height:0;
+}
+#wikiPage ul{
+  line-height:1.5em;
+  list-style: square inside none;
+  margin:0 18px 1em 60px;
+  color:#000;
+}
+#wikiPage ol{
+  line-height:1.5em;
+  list-style: decimal inside none;
+  margin:0 18px 1em 60px;
+  color:#000;
+}
+#wikiPage li ul, #wikiPage li ol{
+  margin:0 0 0 1.5em;
+}
+#wikiPage li ol{
+  list-style-type:lower-alpha;
+}
+#wikiPage li li ol{
+  list-style-type:lower-roman;
+}
+#wikiPage li ul{
+  list-style-type:disc;
+}
+#wikiPage li li ul{
+  list-style-type:circle;
+}
+#wikiPage table{
+  background-color:#fff;
+  border-spacing:0px;
+  border-collapse:collapse;
+}
+#wikiPage table th{
+  padding:3px;
+  border:1px solid #8cacbb;
+  background-color:#dee7ec;
+}
+#wikiPage table td{
+  padding:3px;
+  border:1px solid #8cacbb;
+}
+
+
+

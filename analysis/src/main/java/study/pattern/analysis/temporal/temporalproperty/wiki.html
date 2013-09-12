@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Temporal Property</title>
+<meta name="Description" content="creole wiki js demo" />
+<meta name="Keywords" content="creole wiki js demo" />
+<link rel="stylesheet" type="text/css" href="../../resources/wiki.css" />
+<script type="text/javascript" src="../../resources/wiki.js"></script>
+</head>
+<body >
+<textarea rows="10" cols="100" id="wikiText">
+= Temporal Property 时序属性  =
+{{{
+随时间变化的属性
+}}}
+
+通常的属性，仅反应对象当前的属性；然而有时候需要查询过去某个时间点的属性，该属性值可能已发生变化。
+
+== How it Works 运行机制 ==
+* 使用[[../timepoint/wiki.html|Time Point]]作为访问方法的参数
+* 没有参数的话，使用缺省时间点，通常是today
+
+== When to use it 使用时机 ==
+* 对象的某些属性随时间变化，且需要容易的访问到历史值。
+* 如果有较多的属性有时序性，应该使用[[../temporalobject/wiki.html|Temporal Object]]
+
+== Further Reading 进一步阅读 ==
+
+
+== Example 示例 ==
+* TemporalCollection.java
+* SingleTemporalCollection.java
+* BitemporalCollection.java
+
+</textarea>
+<div id="wikiPage"></div>
+
+<script type="text/javascript"><!--
+window.onload = function() {
+  var creole = new Parse.Simple.Creole();
+  creole.parse(document.getElementById('wikiPage'), document.getElementById('wikiText').value);
+}
+//--></script>
+</body>
+</html>

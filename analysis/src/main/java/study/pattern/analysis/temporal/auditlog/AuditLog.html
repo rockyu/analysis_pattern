@@ -1,0 +1,78 @@
+<h1>Audit Log</h1>
+
+<p><i>A simple log of changes, intended to be
+easily written and non-intrusive.</i></p>
+
+<h2>How it Works</h2>
+<P>An audit log is the simplest, yet also one of the most effective
+forms of tracking temporal information. The idea is that any time
+something significant happens you write some record indicating what
+happened and when it happened.
+</P><P>An audit log can take many physical forms. The most common form is
+a file. However a database table also makes a fine audit log. If you
+use a file you need a format. An ASCII form helps in making it
+readable to humans without special software. If it's a simple tabular
+structure, then tab delimited text is simple and effective. More
+complex structures can be handled nicely by XML.
+</P><P><i>Audit Log</i> is easy to write but harder to read, especially as it grows
+large. Occasional ad hoc reads can be done by eye and simple text
+processing tools. More complicated or repetitive tasks can be
+automated with scripts. Many scripting languages are well suited to
+churning though text files. If you use a database table you can save
+SQL scripts to get at the information.
+</P><P>When you use <i>Audit Log</i> you should always consider writing out both
+the actual and record dates. They are easy to produce and even though
+they may be the same 99% of the time, the 1% can save your bacon. As
+you do this remember that the record date is always the current
+processing date.
+</P>
+<h2>When to use it</h2>
+<P>The glory of <i>Audit Log</i> is its simplicity. As you compare <i>Audit Log</i> to
+other patterns such as <a href = 'TemporalProperty.html'>Temporal Property</a> and
+<a href = 'TemporalObject.html'>Temporal Object</a> you quickly realize that these
+alternatives add a lot of complexity to an object model, although
+these are both often better at hiding that complexity than using
+<a href = 'Effectivity.html'>Effectivity</a> everywhere.
+</P><P>But it's the difficulty of processing <i>Audit Log</i> that is it's
+limitation. If you are producing bills every week based on
+combinations of historic data, then all the code to churn through the
+logs will be slow and difficult to maintain. So it all depends how
+tightly the accessing of temporal information is integrated into your
+regular software process. The tighter the integration, the less useful
+is <i>Audit Log</i>.
+</P><P>Remember that you can use <i>Audit Log</i> in some parts of the model and
+other patterns elsewhere. You can also use <i>Audit Log</i> for one dimension
+of time and a different pattern for another dimension. So you might
+handle actual time history of a property with <a href = 'TemporalProperty.html'>Temporal Property</a> and use <i>Audit Log</i> to handle the record
+history.
+</P>
+<h2>Example:  (Java)</h2>
+<P>A simple <i>Audit Log</i> can be very simple indeed.
+</P><pre>class Customer...
+  private String phone;
+  public String getPhone() {
+    return (phone == null) ? "none" : phone;}
+  public void setPhone(String arg, MfDate changeDate) {
+    log (changeDate, this, "change of phone", phone, arg);
+    phone = arg;
+  }
+  public void setPhone(String arg) {
+    setPhone(arg, MfDate.today());
+  }
+  private static void log (MfDate validDate, Customer customer, String description, Object oldValue, Object newValue) {
+    try {
+      logfile().write(validDate.toString() + customer.name() + "\t" + description + 
+        "\t" + oldValue + "\t" + newValue + "\t" + MfDate.today() + "\n");
+      logfile().flush();
+    } catch (IOException e) {throw new ApplicationException ("Unable to write to log");}
+  }
+</pre><P>Notice that even though the setting method
+only uses the actual time, I've also added the record date
+(<code>MfDate.today</code> to the log. I think it's always wise to add
+both dates as it's easy to do and if you don't add it you can't
+reconstitute it later.
+
+</P><P>I'll leave the script for finding out my phone number on some
+arbitrary date as an exercise for the reader. (Clearly it's too
+trivial for me to write out here....)
+</P>

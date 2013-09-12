@@ -1,0 +1,232 @@
+<h1>Temporal Object</h1>
+
+<p><i>An object that changes over
+time</i></p>
+<img src = 'temporalObject/temporalObject.gif'></img><P>There are times when you like to think of an object having temporal
+properties, but others when you think of the object itself as
+temporal. A good example of this is a contract that goes through a
+series of amendments. You can think of each amendment as essentially a
+new contract with new terms, yet you can also think of them as
+versions of the same contract.
+</P>
+<h2>How it Works</h2>
+<P>This pattern is very common, yet appears in a number of forms. To
+help grapple with these forms, I find it very helpful to use some role
+analysis. The pattern essentially has two roles: one continuity and
+several versions.
+</P><P>Each version captures the state of the object for some period of
+time. Any time the value of any property of the object changes, you
+get a new version. Thus you can imagine the versions as a list of
+objects with an <a href = 'Effectivity.html'>Effectivity</a> to handle the date
+range.
+</P><P>The continuity represents the on going object that goes through
+these changes in version. It's the object people refer to when they
+are thinking of the object throughout its changes.
+</P><P>Other than the temporal property of version, the continuity either
+has no data or only the data that is truly immutable across the whole
+life of the continuity. However it acts as the point for other objects
+to gather data. Current values can be accessed simply with a getting
+method that delegates to the current version. Historic values can be
+reached in a couple of ways. Either the continuity can present a
+temporal property for the properties of the version, or the continuity
+can provide a snapshot. You can mix both, perhaps providing a temporal
+property interface for common values and a <a href = 'Snapshot.html'>Snapshot</a>for the rest.
+</P><P>You might also provide direct access to the versions for editing
+purposes, if you want users to explicitly change the version
+history. Often, however, you'll want to control all accesses through
+the continuity.
+</P><P>The thing that makes this pattern so odd to work with is that you
+have so many options of how to model this.
+</P><P>Consider a contract I have for a credit card. I get the credit card
+on Feb 1 1997, and it comes with the usual incomprehensible contract
+agreement that I file in a filing cabinet never to be seen again. On
+Apr 15 1998 a revised agreement comes in the post that gets the same
+treatment. So you have one credit card and two (versions of)
+contracts.
+</P><P>One way is to treat each contract as effectively a separate
+contract tied to the credit card. In many ways this doesn't involve
+<i>Temporal Object</i> at all. Instead you are thinking of explicitly having a credit
+card with a <a href = 'TemporalProperty.html'>Temporal Property</a>of the contract.
+</P>
+<div class = 'figure'>
+<p class = 'figureImage'><a name = 'temporalObject_creditCardToContract.gif'></a><img src = 'temporalObject/creditCardToContract.gif' alt = 'Figure 1'></img></p>
+
+<p class = 'figureCaption'>Figure 1: Treating each
+credit card as a separate contract</p>
+</div>
+<P>A second option is to
+say that the credit card has a contract which itself has a collection
+of contract versions. Much of the difference between this and treating
+each contract as a separate thing is in the way the business views
+their business process. One advantage is that if a company has
+customers on different contracts then the contract object is a clear
+place to hang that concept. Of course a company may have some other
+concept for this purpose, such as a credit card type (for gold,
+platinum, and base metal) and only have the one contract per type. In
+that case the value of the contract object, at least in terms of the
+representation, is reduced; but there's still value in the behavior.
+</P>
+<div class = 'figure'>
+<p class = 'figureImage'><a name = 'temporalObject_contactWithVersions.gif'></a><img src = 'temporalObject/contactWithVersions.gif' alt = 'Figure 2'></img></p>
+
+<p class = 'figureCaption'>Figure 2: A contract with
+explicit versions</p>
+</div>
+<P> Figure <a href = '#temporalObject_contactWithVersions.gif'>2</a>is the most obvious form of the
+temporal object pattern as there is an explicit class for both of the
+roles in the pattern. Things get a little less explicit however when
+an object plays both continuity and one of the versions.
+</P>
+<div class = 'figure'>
+<p class = 'figureImage'><a name = 'temporalObject_contractAmendment.gif'></a><img src = 'temporalObject/contractAmendment.gif' alt = 'Figure 3'></img></p>
+
+<p class = 'figureCaption'>Figure 3: A contract with
+amendments - class diagram.</p>
+</div>
+<P>A good example of this is a
+model like  Figure <a href = '#temporalObject_contractAmendment.gif'>3</a> where we have
+contract that has an amendment which is a contract and thus can have
+it's own amendments. In this case the contract class plays both the
+role of continuity and version, with the usual notion that it's only
+the first contract in the chain that plays the role of
+continuity. That way anything that referred to the original contract
+has a clear point of reference, but we can still use versions to hold
+changes.
+</P><P>The amendment style of  Figure <a href = '#temporalObject_contractAmendment.gif'>3</a> is
+useful when contracts are rarely amended, since that way there is only
+one contract while the explicit style of  Figure <a href = '#temporalObject_contactWithVersions.gif'>2</a> always needs at least two objects even
+if there is no amendment. Despite this, these days I'm inclined to use
+the explicit form all the time, since the responsibilities are more
+clearly separated. Also the explicit form is more amenable to using a
+temporal collection for implementation, and I find that much easier
+than traversing lists. (Although to be fair you can use a temporal
+collection for the amendments, rather than the list form that is more
+usually used.)
+</P><P>Another aspect of this to bear in mind is that often the continuity
+is not represented by an object, particularly in less OO style
+systems. For example, in a relational database you may well only have
+the a table for the versions, and no table for the continuity. In such
+a relational model, the continuity is implemented by a field such as
+the contract number. The primary key of the contracts table would
+combine this contract number and part of the <a href = 'Effectivity.html'>Effectivity</a>, such as the start date.
+</P><P>Another simple example is a source code control system. Here the
+continuity is the filename of the versioned file, each version is
+stored, usually as a delta, as a separate entry inside the source code
+control system.
+</P>
+<h2>When to use it</h2>
+<P>The biggest question in when to use this pattern is
+comparing it to using <a href = 'TemporalProperty.html'>Temporal Property</a>. There's a
+lot of overlap between the two, indeed you can see that often the
+continuity's interface is a set of temporal properties. Indeed as far
+as a client is concerned the interface between having every property
+be a <a href = 'TemporalProperty.html'>Temporal Property</a> and using <i>Temporal Object</i> is pretty
+much the same.
+</P><P>One obvious driver is what proportion of the properties are
+temporal. If it's just a few, then use <a href = 'TemporalProperty.html'>Temporal Property</a>, if it's most then use <i>Temporal Object</i>. Of course
+that just means I'm leaving the judgement of the difference between
+few and most up to you - isn't that irritating?
+</P><P>Another issue is how the business folks like to see the
+information. If they want to think of a contact of having explicit
+amendments, then it's worth using <i>Temporal Object</i> even if only a single
+property is temporal. As soon as business folks need to refer
+explicitly to versions, you need <i>Temporal Object</i> to give them versions to
+refer to.
+</P>
+<h2>Further Reading</h2>
+<P>Anderson's <a href = 'http://www.amazon.com/exec/obidos/ASIN/0201433044'>Plop paper</a> discusses this
+pattern under the name <I>History on Self</I>. <a href = 'http://www.manfred-lange.com/publications/TimeTravel.pdf'>[Arnoldi et al]</a> describes this pattern under the name
+<I>Version History</I></P>
+<h2>Example: Explicit Continuity and Version (Java)</h2>
+<P>For the sample code I'll follow the explicit form of  Figure <a href = '#temporalObject_contactWithVersions.gif'>2</a>. The customer version class contains
+the data that you would expect with on customers.
+</P><pre>class CustomerVersion...
+  private String address;
+  private Money creditLimit;
+  private String phone;
+
+  String address() {return address;}
+  Money creditLimit() {return creditLimit;}
+  String phone() {return phone;}
+
+  void setName(String arg) {_name = arg;}
+  void setAddress(String arg) {address = arg;}
+  void setCreditLimit(Money arg) {creditLimit = arg;}
+</pre><P>The customer class contains a temporal collection (see <a href = 'TemporalProperty.html'>Temporal Property</a> for how that works) of customer versions and its simple getting methods delegate to the latest version.
+</P><pre>class Customer...
+  private TemporalCollection history = new SingleTemporalCollection();
+
+  public String name() {return current().name();}
+  public String address() {return current().address();}
+  public Money creditLimit() {return current().creditLimit();}
+  public String phone() {return current().phone();}
+  
+  private CustomerVersion current() {
+    return (CustomerVersion)history.get();
+  }
+</pre><P>When it comes to updating the
+customer, you have to consider how explicit you want the versions to
+be. If all you want is a simple current additive update, you can
+provide a normal looking setting method. This setting method takes a
+copy of the version, updates the copy, and then adds the copy to the
+history.
+</P><pre>class Customer...
+  public void setAddress(String arg) {
+    CustomerVersion workingCopy = getWorkingCopy();
+    workingCopy.setAddress(arg);
+    history.put(workingCopy);
+  }
+  public CustomerVersion getWorkingCopy() {
+    return current().copy();
+  }
+</pre><pre>class CustomerVersion...
+  CustomerVersion copy() {
+    return new CustomerVersion(_name, address, phone, creditLimit);
+  }
+  
+  public CustomerVersion (String name, String address,
+            String phone, Money creditLimit)
+  {
+    super(name);
+    this.address = address;
+    this.phone = phone;
+    this.creditLimit = creditLimit;
+  }
+</pre><P>This allows you to make changes to the temporal
+record with simple setting methods.
+</P><pre>class Tester...
+  public void testSimple () {
+    MfDate.setToday(new MfDate (1998, 8, 23));
+    martin.setAddress(Damon15);
+    martin.setCreditLimit(Money.dollars(100));
+    MfDate.setToday(new MfDate (2000, 9,30));
+    assertAddresses();
+    assertCreditLimits();
+  }
+  private void assertCreditLimits() {
+    assertEquals(Money.dollars(50), martin.creditLimit(new MfDate(1997, 12, 25)));
+    assertEquals(Money.dollars(50), martin.creditLimit(new MfDate(1998, 8, 22)));
+    assertEquals(Money.dollars(100), martin.creditLimit(new MfDate(1998, 8, 23)));
+    assertEquals(Money.dollars(100), martin.creditLimit());
+  }
+  private void assertAddresses() {
+    assertEquals(Franklin963, martin.address(new MfDate(1997, 12, 25)));
+    assertEquals(Franklin963, martin.address(new MfDate(1998, 8, 22)));
+    assertEquals(Damon15, martin.address(new MfDate(1998, 8, 23)));
+    assertEquals(Damon15, martin.address());
+  }
+</pre><P>However for a retroactive update, the client of customer needs to
+be aware of the versions. So a retroactive update would be done by a
+client like this.
+</P><pre>class Tester...
+  public void testWorkingCopy() {
+    MfDate.setToday(new MfDate (2000, 9,30));
+    CustomerVersion workingCopy = martin.getWorkingCopy();
+    workingCopy.setAddress(Damon15);
+    workingCopy.setCreditLimit(Money.dollars(100));
+    martin.addVersion(new MfDate (1998, 8, 23), workingCopy);
+    MfDate.setToday(new MfDate (2000, 9,30));
+    assertAddresses();
+    assertCreditLimits();
+  }
+</pre>

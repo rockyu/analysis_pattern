@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>wiki demo</title>
+<meta name="Description" content="creole wiki js demo" />
+<meta name="Keywords" content="creole wiki js demo" />
+<link rel="stylesheet" type="text/css" href="wiki.css" />
+<script type="text/javascript" src="wiki.js"></script>
+</head>
+<body >
+<textarea rows="10" cols="100" id="wikiText">
+= Formatting Syntax 格式化语法 =
+支持Creole 1.0(通用wiki标记)。\\
+使用的解析器是[[http://www.ivan.fomichev.name/2008/04/javascript-creole-10-wiki-markup-parser.html|JavaScript Creole 1.0 Wiki Markup Parser]]。\\
+样式表借鉴[[http://www.dokuwiki.org/|DokuWiki]]。
+== Basic Text Formatting 基本文本格式 ==
+支持**bold 粗体**, //italic 斜体//
+{{{
+  **bold 粗体**, //italic 斜体//
+}}}
+
+空行形成段落。
+
+换行\\使用双斜杠。
+{{{
+空行形成段落。
+
+换行\\使用双斜杠。
+}}}
+
+== Links 链接 ==
+链接到[[wiki page]]
+{{{
+链接到[[wiki page]]
+}}}
+链接到[[http://www.wikicreole.org/attach/CheatSheet/creole_cheat_sheet.html|Creole Cheat Sheet]]
+{{{
+链接到[[http://www.wikicreole.org/attach/CheatSheet/creole_cheat_sheet.html|Creole Cheat Sheet]]
+}}}
+
+== Head line 标题 ==
+=== 标题3 ===
+  正文3开始
+==== 标题4 =====
+  正文4开始
+===== 标题5 ======
+  正文5开始
+{{{
+=== 标题3 ===
+正文3开始
+==== 标题4 =====
+正文4开始
+===== 标题5 ======
+正文5开始
+}}}
+
+== Horizontal line 水平线 ==
+----
+{{{
+----
+}}}
+
+== Lists 列表 ==
+Unordered Lists 无序列表
+* 第一项
+* 第二项
+ ** 深一级
+  *** 深二级
+   **** 深三级
+* 另一项
+
+{{{
+* 第一项
+* 第二项
+ ** 深一级
+  *** 深二级
+   **** 深三级
+* 另一项
+}}}
+
+Ordered Lists 有序列表
+# 第一项
+# 第二项
+ ## 深一级
+  ### 深二级
+   #### 深三级
+# 另一项
+
+{{{
+# 第一项
+# 第二项
+ ## 深一级
+  ### 深二级
+   #### 深三级
+# 另一项
+}}}
+
+== Tables 表格 ==
+|=     |=col1 第一列|=col2 第二列|
+|第一行|abc         |xyz         |
+|第二行|hello       | world      |
+
+{{{
+|=       |=col1 第一列|=col2 第二列|
+|第一行|abc             |xyz              |
+|第二行|hello           | world          |
+}}}
+
+== Images 图像 ==
+{{patterns.jpg|Pattters 模式}}
+
+{{{
+{{patterns.jpg|Pattters 模式}}
+}}}
+
+</textarea>
+<div id="wikiPage"></div>
+
+<script type="text/javascript"><!--
+window.onload = function() {
+  var creole = new Parse.Simple.Creole({forIE: document.all});
+  creole.parse(document.getElementById('wikiPage'), document.getElementById('wikiText').value);
+}
+//--></script>
+</body>
+</html>

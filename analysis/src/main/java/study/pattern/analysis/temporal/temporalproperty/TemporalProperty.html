@@ -1,0 +1,262 @@
+<h1>Temporal Property</h1>
+
+<p><i>A property that changes over time</i></p>
+<img src = 'temporal/temporalProperty.gif'></img><P>Usually when we see properties on a class, they represent questions
+we can ask of an object <I>now.</I> However there are times when we
+don't want to just ask questions about a property of an object now, we
+also want to ask these questions about some point in the past when
+things may have changed.
+</P>
+<h2>How it Works</h2>
+<P>The key to this pattern is providing a regular and
+predictable interface for dealing with those properties of an object
+that change over time. The most important part of this lies in the
+accessor functions. You will always see an accessor function that
+takes a <a href = 'TimePoint.html'>Time Point</a> as an argument: this allows you to ask "what was Mr
+Fowler's address on 2 Feb 1998?". In addition you'll usually see an
+accessor that takes no argument, this is a question about an address
+according to some default, usually today.
+</P><P>As well accessing information, you'll often need to update
+information. The simplest form of modification is an additive
+update. You can think of an additive update as one that adds another
+piece of information on the end of the timeline.An additive update can
+be handled with a single put method that takes a timepoint and a new
+value. So this would say "change Mr Fowler's address to 15 Damon Ave
+with effect from 23 August 1998". The supplied date can be in the
+past, indicating a retroactive change; in the present, indicating a
+current change; or in the future, reflecting a scheduled change. Again
+you may find it useful to have a put method without a timepoint that
+uses today (or a similar default) as the effective date for the
+change. This makes it easy to make current changes.
+</P><P>The other kind of update is an insertion update. This one of the
+form where you want to say "we had Mr Fowler moving in to 963 Franklin
+St in January 1998, but we need to change that to December 1997". The
+point here is that this modifying a piece of temporal information we
+currently have, rather than adding one on the end.  For this you need
+a reference that access the value at the time you currently have and
+then adjusts it to a new range. It is not enough just to supply the
+value here, since the value may be valid during different ranges: I
+can move out and then return to the same address.
+</P><P>For an example let say I lived at 154 Norwood Rd from Sep 85 to Jan
+87 moved to Brighton for six months and returned to stay for a while
+longer. If I needed to adjust the first stay's departure from January
+to February it's important to get the first stay and not the
+second. So I need both the address and something that identifies the
+first stay - in practice any date during the range of the first stay.
+</P><P>If the value you're holding is a <a href = 'http://martinfowler.com/eaaCatalog/valueObject.html'>Value Object</a>
+you can actually just get away with an additive update, although an
+insertion update may be more easy to use.
+</P><P>There are two ways to implement <i>Temporal Property</i>. One is to have a
+collection of objects using <a href = 'Effectivity.html'>Effectivity</a> and then
+manipulate this collection. However once you find yourself doing this
+more than once you'll realize that it may be best to create a special
+collection class that provides this behavior: a <I>temporal
+collection</I>. Such a class is quite easy to write and can be used
+whenever you need a <i>Temporal Property</i>.
+</P>
+<h2>When to use it</h2>
+<P>You should use a <i>Temporal Property</i> when you have a class that has a few
+properties that display temporal behavior, and you want easy access to
+those temporal values.
+</P><P>The first point of this is the point about easy access. The easiest
+way to record temporal changes is to use <a href = 'AuditLog.html'>Audit Log</a>. The disadvantage of <a href = 'AuditLog.html'>Audit Log</a>
+is that you need extra work to process the log. So the first thing you
+need to know is under what circumstances people will need the history
+of that property. Remember that it's not difficult to refactor a
+regular property into a temporal one.(You can just replace the target
+field with a temporal collection, and easily maintain the existing
+interface.)
+</P><P>The second point is to consider how many properties are
+temporal. If most of the properties of the class are temporal, then
+you'll need to use <a href = 'TemporalObject.html'>Temporal Object</a>.
+</P>
+<h2>Further Reading</h2>
+<P>I first described <i>Temporal Property</i> in <a href = 'http://www.amazon.com/exec/obidos/ASIN/0201895420'>[fowler-ap]</a> under the
+name <I>Historic Mapping</I>. My ideas were then refined by
+collaboration with Andy Carlson and Sharon Estepp in preparing the
+temporal patterns paper in <a href = 'http://www.amazon.com/exec/obidos/ASIN/0201433044'>[PLoPD 4]</a>. Francis Anderson's
+<a href = 'http://www.amazon.com/exec/obidos/ASIN/0201433044'>plop paper</a> also describes this pattern
+under the name <I>History on Association</I>.
+</P>
+<h2>Example: Using a Temporal Collection (Java)</h2>
+<P>A temporal collection is a
+simple way to implement a <i>Temporal Property</i>. The basic representation and
+interface for a temporal collection is similar to a map: provide a get
+and put operation that uses a date as an index. Indeed a map makes a
+good backing collection for it.
+</P><pre>class TemporalCollection...
+  private Map contents = new HashMap();
+  public Object get(MfDate when) {
+    /** returns the value that was effective on the given date */
+    Iterator it = milestones().iterator();
+    while (it.hasNext()) {
+      MfDate thisDate = (MfDate) it.next();
+      if (thisDate.before(when) || thisDate.equals(when)) return contents.get(thisDate);
+    }
+    throw new IllegalArgumentException("no records that early");
+  }
+  public void put(MfDate at, Object item) {
+    /** the item is valid from the supplied date onwards */
+    contents.put(at,item);
+    clearMilestoneCache();
+  }
+</pre><P>The map contains the
+values indexed by the start date of when they become effective. The
+milestones method returns these keys in reverse order. The get method
+then works through these milestones to find the right key. This
+algorithm works best when you are more likely to ask for the most
+recent value.
+</P><P>If you access the temporal collection more often than you update
+it, it may be worth caching the milestones collection.
+</P><pre>class TemporalCollection...
+  private List _milestoneCache;
+  private List milestones() {
+    /** a list of all the dates where the value changed, returned in order
+    latest first */
+    if (_milestoneCache == null)
+      calculateMilestones();
+    return _milestoneCache;
+  }
+  private void calculateMilestones() {
+    _milestoneCache = new ArrayList(contents.size());
+    _milestoneCache.addAll(contents.keySet());
+    Collections.sort(_milestoneCache, Collections.reverseOrder());
+  }
+  private void clearMilestoneCache() {
+    _milestoneCache = null;
+  }
+</pre><P>When you have a temporal collection written, then it is easy to make a temporal collection of addresses for a customer.
+</P><pre>class Customer...
+  private TemporalCollection addresses = new SingleTemporalCollection();
+  public Address getAddress(MfDate date) {
+    return (Address) addresses.get(date);
+  }
+  public Address getAddress() {
+    return getAddress(MfDate.today());
+  }
+  public void putAddress(MfDate date, Address value) {
+    addresses.put(date, value);
+  }
+</pre><P>One of the biggest problems using the temporal
+collection is if you have to persist the collection into a relational
+database - the mapping to tables is not exactly
+straightforward. Essentially the relational database needs to use
+<a href = 'Effectivity.html'>Effectivity</a>. This often means that you'll need to
+create an intersection table as a place for the date range.  Some of
+this code can be generalized to the temporal collection class, but
+some explicit mapping code will be needed.
+</P>
+<h2>Example: Implementing a Bi-temporal Property (Java)</h2>
+<P>Before thinking about
+how a Bi-temporal property works, it's worth thinking about what it
+must do. Essentially the bi-temporal property allows us to store
+historic information over time and retain a full history across both
+dimensions. So we build up a history like this.
+</P><pre>class Tester...
+  private Customer martin;
+  private Address franklin = new Address ("961 Franklin St");
+  private Address worcester = new Address ("88 Worcester St");
+  public void setUp () {
+    MfDate.setToday(new MfDate(1996,1,1));
+    martin = new Customer ("Martin");
+    martin.putAddress(new MfDate(1994, 3, 1), worcester);
+    MfDate.setToday(new MfDate(1996,8,10));
+    martin.putAddress(new MfDate(1996, 7, 4), franklin);
+    MfDate.setToday(new MfDate(2000,9,11));
+  }
+</pre><P>Notice the rhythm to the updates. When we are
+storing bi-temporal history the record date is always today. So in our
+tests we change the current date first and then store information in
+the history. As we put information into the history we supply the
+actual date.
+</P><P>The resulting history looks like this.
+</P><pre>class Tester...
+  private MfDate jul1 = new MfDate(1996, 7, 1);
+  private MfDate jul15 = new MfDate(1996, 7, 15);
+  private MfDate aug1 = new MfDate(1996, 8, 1);
+  private MfDate aug10 = new MfDate(1996, 8, 10);
+  public void testSimpleBitemporal () {
+    assertEquals("jul1 as at aug 1", worcester, martin.getAddress(jul1, aug1));
+    assertEquals("jul1 as at aug 10",worcester, martin.getAddress(jul1, aug10));
+    assertEquals("jul1 as at now",worcester, martin.getAddress(jul1));
+
+    assertEquals("jul15 as at aug 1", worcester, martin.getAddress(jul15, aug1));
+    assertEquals("jul15 as at aug 10",franklin, martin.getAddress(jul15, aug10));
+    assertEquals("jul15 as at now",franklin, martin.getAddress(jul15));
+  }
+</pre><P>Just as you can implement much of the
+complexity of temporal properties by using a temporal collection,
+similarly you can define a bi-temporal collection to handle much of
+the complexities of bi-temporal properties.
+</P><P>Essentially a bi-temporal collection is a temporal collection whose
+elements are temporal collections. Each temporal collection is a
+picture of record history.
+</P><P>We'll look at how you get information out of the collection
+first. The latest temporal collection represents the actual history
+whose record date is now. So a getting method that only has a actual
+date uses this current actual history.  </P><pre>class BitemporalCollection...
+  private SingleTemporalCollection contents = new SingleTemporalCollection();
+  public BitemporalCollection() {
+    contents.put(MfDate.today(), new SingleTemporalCollection());
+  }
+  public Object get(MfDate when) {
+    return currentValidHistory().get(when);
+  }
+  private SingleTemporalCollection currentValidHistory() {
+    return (SingleTemporalCollection) contents.get();
+  }
+</pre><P>(The class <code>SingleTemporalCollection</code> is just the vanilla temporal
+collection I discussed above, I'll explain the relationship between
+the two later.)
+</P><P>To to get a true bi-temporal value, we use a getter with both
+actual and record dates.
+</P><pre>class BitemporalCollection...
+  public Object get(MfDate validDate, MfDate transactionDate) {
+    return validHistoryAt(transactionDate).get(validDate);
+  }
+  private TemporalCollection validHistoryAt(MfDate transactionDate) {
+    return (TemporalCollection) contents.get(transactionDate);
+  }
+</pre><P>We can then use the bi-temporal collection in a domain class.
+</P><pre>class Customer...
+  BitemporalCollection addresses = new BitemporalCollection();
+  public Address getAddress(MfDate actualDate) {
+    return (Address) addresses.get(actualDate);
+  }
+  public Address getAddress(MfDate actualDate, MfDate recordDate) {
+    return (Address) addresses.get(actualDate, recordDate);
+  }
+  public Address getAddress() {
+    return (Address) addresses.get();
+  }
+</pre><P>Each time we update the collection, we need to keep the old copy of
+the actual history.
+</P><pre>class BitemporalCollection...
+  public void put(MfDate validDate, Object item) {
+    contents.put(MfDate.today(), currentValidHistory().copy());
+    currentValidHistory().put(validDate,item);
+  }
+  public void put(Object item) {
+    put(MfDate.today(),item);
+  }
+</pre><P>The bi-temporal
+collection supports a very similar interface to a one dimensional
+temporal collection. So we can make an interface for temporal
+collection and provide separate implementations for the one
+dimensional and two dimensional collections. This allows bi-temporal
+collections to be substitutable for one dimensional temporal
+collections, which makes it easy to refactor a single dimensional
+temporal property into a bi-temporal property.
+</P><P>In this case I'm using <a href = 'TimePoint.html'>Time Point</a> with a date
+granularity for both the actual and record dates. Although this makes
+the example simpler to write, it may be better to use a finer
+granularity for the record time. The issue here is that if you modify
+a record at 2pm, run a billing process at 3pm and then modify it again
+at 4pm. With the current implementation the appropriate value, while
+not completely lost, is not easy to get to. Another approach, often
+used in business, is only to do things like billing at the end of a
+business day and not to allow any further updates on that day after
+billing is done. Post billing updates are then given a record date of
+the day after billing is done. Again this kind of functionality can
+easily be added to the appropriate temporal collection classes.
+</P>
